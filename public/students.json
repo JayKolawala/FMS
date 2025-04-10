@@ -1,0 +1,44 @@
+{
+  "students": [
+    {
+      "id": "1",
+      "name": "Jay Kolawala",
+      "standard": "10th",
+      "feesPaid": true,
+      "email": "jskolawala@gmail.com",
+      "mobile": "9426631080"
+    },
+    {
+      "id": "2",
+      "name": "Madhav polawala",
+      "standard": "9th",
+      "feesPaid": false,
+      "email": "Madhavpolawala@gmail.com",
+      "mobile": "7203031080"
+    },
+    {
+      "id": "3168",
+      "name": "raj",
+      "standard": "12th",
+      "feesPaid": false,
+      "email": "raj@gmail.com",
+      "mobile": "1234567895"
+    },
+    {
+      "id": "de29",
+      "name": "Malay",
+      "standard": "1st",
+      "feesPaid": true,
+      "email": "malay@gmail.com",
+      "mobile": "9876543210"
+    }
+  ],
+
+  "fees": [
+    {
+      "id": "1",
+      "standard": "1th",
+      "amount": 12000
+    }
+  ]
+}
