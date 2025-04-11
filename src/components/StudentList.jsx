@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import StudentForm from './StudentForm';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default function StudentList({ students, setStudents, isDashboard }) {
-
     const [standardFilter, setStandardFilter] = useState('All');
     const [showForm, setShowForm] = useState(false);
+    const [editingStudentId, setEditingStudentId] = useState(null);
 
   const toggleFeesStatus = (id) => {
     const updated = students.map((s) =>
@@ -16,14 +18,50 @@ export default function StudentList({ students, setStudents, isDashboard }) {
   const handleAddStudent = (newStudent) => {
     setStudents((prev) => [...prev, newStudent]);
     setShowForm(false);
+    setEditingStudentId(null);
   };
 
+  const handleUpdateStudent = (updatedStudent) => {
+    const updatedList = students.map((s) =>
+      s.id === updatedStudent.id ? updatedStudent : s
+    );
+    setStudents(updatedList);
+    setShowForm(false);
+    setEditingStudentId(null);
+  };
+  
   const handleEditStudent = (id) => {
-    const student = students.find((s) => s.id === id);
+    setEditingStudentId(id);
+    setShowForm(true);
+  };
 
-    <StudentForm student={student}/>
-  }
-
+  const handleDeleteStudent = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:5000/students/${id}`);
+        setStudents((prev) => prev.filter((s) => s.id !== id));
+  
+        Swal.fire({
+          title: "Deleted!",
+          text: "The student has been deleted.",
+          icon: "success"
+        });
+      } catch (err) {
+        console.error("Error deleting student:", err);
+      }
+    }
+  };
+  
   const filteredStudents =
     standardFilter === 'All'
       ? students
@@ -85,8 +123,8 @@ export default function StudentList({ students, setStudents, isDashboard }) {
         )
       }  
       <div className="overflow-x-auto mt-4">
+
       <div className="mb-4 flex flex-col md:flex-row items-center justify-between gap-3">
-        
         <select
           value={standardFilter}
           onChange={(e) => setStandardFilter(e.target.value)}
@@ -98,15 +136,28 @@ export default function StudentList({ students, setStudents, isDashboard }) {
             </option>
           ))}
         </select>
+          {!isDashboard && (
+            <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+          >
+            {showForm ? 'Close Form' : 'Add Student'}
+          </button>
+          )
+          }
+        
 
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-        >
-          {showForm ? 'Close Form' : 'Add Student'}
-        </button>
       </div>
-      {showForm && <StudentForm onAdd={handleAddStudent} />}
+
+      {showForm && (
+        <StudentForm
+          onAdd={handleAddStudent}
+          onUpdate={handleUpdateStudent}
+          students={students}
+          editingStudentId={editingStudentId}
+        />
+      )}
+
       <table className="w-full table-auto bg-white rounded-xl shadow-lg">
         <thead className="bg-blue-600 text-white">
           <tr>
@@ -165,7 +216,7 @@ export default function StudentList({ students, setStudents, isDashboard }) {
                       Edit
                     </button>
                     <button
-                      onClick={() => alert(`Delete ${student.name}`)}
+                      onClick={() => handleDeleteStudent(student.id)}
                       className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm"
                     >
                       Delete

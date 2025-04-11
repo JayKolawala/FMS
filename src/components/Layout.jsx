@@ -20,12 +20,11 @@ const Layout = () => {
   };
 
   return (
-    <div className="flex  gap-4 ">
-        
+    <div className="flex gap-4">
       <div className="flex col-span-1">
         <SideBar onComponentChange={handleComponentChange} />
       </div>
-      <div className="flex  w-full">
+      <div className="flex w-full">
         {activeComponent === 'Dashboard' && (
           <Dashboard students={students} setStudents={setStudents} />
         )}

@@ -1,13 +1,11 @@
 import React, { use } from 'react'
-import { useNavigate } from 'react-router-dom';
 
 const SideBar = ({ onComponentChange }) => {
-    const navigate = useNavigate();
 
       const handleLogout = () => {
         localStorage.removeItem('isLoggedIn');
         window.location.reload();
-  };
+      };
   return (
     <>
         <div className='flex w-96 flex-col bg-blue-600 shadow-lg rounded-lg p-4 w-full h-screen'>

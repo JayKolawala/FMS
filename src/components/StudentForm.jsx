@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const StudentForm = ({ onAdd }) => {
+const StudentForm = ({ onAdd, onUpdate, students, editingStudentId  }) => {
     const [standard, setStandard] = useState(['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th']);  
     const [formData, setFormData] = useState({
         name: '',
@@ -10,6 +10,14 @@ const StudentForm = ({ onAdd }) => {
         email: '',
         mobile: ''
       });
+
+      useEffect(() => {
+        if (editingStudentId) {
+          const existing = students.find(s => s.id === editingStudentId);
+          if (existing) setFormData(existing);
+        }
+      }, [editingStudentId, students]);
+      
     
       const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -18,14 +26,20 @@ const StudentForm = ({ onAdd }) => {
           [name]: type === 'checkbox' ? checked : value
         }));
       };
-
+ 
       const handleSubmit = async (e) => {
         e.preventDefault();
-
-        try{
-          const response = await axios.post('http://localhost:5000/students', formData);
-          onAdd(response.data);
-
+        console.log('Submitting form data:', formData);
+        try {
+          if (editingStudentId) {
+            await axios.put(`http://localhost:5000/students/${editingStudentId}`, formData);
+            onUpdate(formData);
+          } else {
+            const newStudent = { ...formData, id: Date.now().toString() };
+            await axios.post('http://localhost:5000/students', newStudent);
+            onAdd(newStudent);
+          }
+      
           setFormData({
             name: '',
             standard: '',
@@ -33,15 +47,20 @@ const StudentForm = ({ onAdd }) => {
             email: '',
             mobile: ''
           });
-        }catch(error){
-          console.error("Error adding student:", error);
+        } catch (error) {
+          console.error("Error submitting form:", error);
         }
-      }
+        console.log('Form submitted successfully');
+      };
+      
 
   return (
     <>
       <div className="bg-white p-6 rounded-xl shadow-md mb-6">
-      <h2 className="text-xl font-bold mb-4 text-gray-700">Add New Student</h2>
+      <h2 className="text-xl font-bold mb-4 text-gray-700">
+        {editingStudentId ? "Edit Student" : "Add New Student"}
+      </h2>
+
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block font-medium mb-1">Full Name</label>
@@ -105,7 +124,7 @@ const StudentForm = ({ onAdd }) => {
             type="submit"
             className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
           >
-            Add Student
+            {editingStudentId ? "Update Student" : "Add Student"}
           </button>
         </div>
       </form>
