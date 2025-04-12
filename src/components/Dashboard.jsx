@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import StudentList from './StudentList';
 import StudentForm from './StudentForm';
 
 const Dashboard = ({ students, setStudents }) => {
-  const [standardFilter, setStandardFilter] = useState('All');
+  const [standardFilter] = useState('All');
   const [showForm, setShowForm] = useState(false);
 
   const handleAddStudent = (newStudent) => {
@@ -16,7 +16,6 @@ const Dashboard = ({ students, setStudents }) => {
       ? students
       : students.filter((s) => s.standard === standardFilter);
 
-  const standards = ['All', ...new Set(students.map((s) => s.standard))];
   return (
     <>
         <div className="w-full p-4 bg-gradient-to-br from-blue-100 to-blue-300">

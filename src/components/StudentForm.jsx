@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const StudentForm = ({ onAdd, onUpdate, students, editingStudentId  }) => {
-    const [standard, setStandard] = useState(['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th']);  
+    const [standard] = useState(['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th']);  
     const [formData, setFormData] = useState({
         name: '',
         standard: '',
